@@ -1,5 +1,5 @@
 using Hotel.Api.Application.Common.Models;
-using Hotel.Api.Application.Helpers;
+using Hotel.Api.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,8 +8,8 @@ namespace Hotel.Api.Controllers
 {
     public class AccountsController : BaseController
     {
-        private readonly AccountsHelper _accountsHelper;
-        public AccountsController(AccountsHelper accountsHelper)
+        private readonly AccountsService _accountsHelper;
+        public AccountsController(AccountsService accountsHelper)
         {
             this._accountsHelper = accountsHelper;
         }

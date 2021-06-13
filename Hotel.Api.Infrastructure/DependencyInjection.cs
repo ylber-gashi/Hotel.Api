@@ -1,5 +1,5 @@
 ﻿using Hotel.Api.Application.Common.Interfaces;
-using Hotel.Api.Application.Helpers;
+using Hotel.Api.Application.Services;
 using Hotel.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +18,7 @@ namespace Hotel.Api.Infrastructure
                         b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-            services.AddScoped<AccountsHelper>();
+            services.AddScoped<AccountsService>();
 
             return services;
         }
