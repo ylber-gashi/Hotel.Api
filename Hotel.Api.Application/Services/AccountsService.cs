@@ -1,7 +1,6 @@
 ﻿using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models;
-using Hotel.Api.Application.Services;
 using Hotel.Api.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,16 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Hotel.Api.Application.Helpers
+namespace Hotel.Api.Application.Services
 {
-    public class AccountsHelper
+    public class AccountsService
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IApplicationDbContext _context;
         private readonly TokenService _tokenService;
 
-        public AccountsHelper(IApplicationDbContext context,
+        public AccountsService(IApplicationDbContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             TokenService tokenService)
