@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hotel.Api.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,8 +10,6 @@ namespace Hotel.Api.Application.Common.Interfaces
 {
     public partial interface IRepository<TEntity> where TEntity : BaseEntity
     {
-        #region Methods
-
         /// <summary>
         /// Get the entity entry
         /// </summary>
@@ -66,8 +65,6 @@ namespace Hotel.Api.Application.Common.Interfaces
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="ISoftDeletedEntity"/> entities)</param>
         /// <returns>Entity entries</returns>
-        Task<IList<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func,
-            bool includeDeleted = false);
 
         /// <param name="func">Function to select entries</param>
         /// <param name="pageIndex">Page index</param>
@@ -75,8 +72,6 @@ namespace Hotel.Api.Application.Common.Interfaces
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="ISoftDeletedEntity"/> entities)</param>
         /// <returns>Paged list of entity entries</returns>
-        Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
-            int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false, bool includeDeleted = false);
 
         /// <param name="func">Function to select entries</param>
         /// <param name="pageIndex">Page index</param>
@@ -84,8 +79,6 @@ namespace Hotel.Api.Application.Common.Interfaces
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="ISoftDeletedEntity"/> entities)</param>
         /// <returns>Paged list of entity entries</returns>
-        Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func = null,
-            int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false, bool includeDeleted = false);
 
         /// <summary>
         /// Insert the entity entry
@@ -143,15 +136,11 @@ namespace Hotel.Api.Application.Common.Interfaces
         /// <returns>Copy of the passed entity entry</returns>
         Task<TEntity> LoadOriginalCopyAsync(TEntity entity);
 
-        #endregion
 
-        #region Properties
 
         /// <summary>
         /// Gets a table
         /// </summary>
         IQueryable<TEntity> Table { get; }
-
-        #endregion
     }
 }
