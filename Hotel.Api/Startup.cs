@@ -15,6 +15,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Threading.Tasks;
 using Hotel.Api.Application.Services;
+using Hotel.Api.Application.Common.Interfaces;
 
 namespace Hotel.Api
 {
@@ -83,7 +84,7 @@ namespace Hotel.Api
             });
 
             services.AddScoped<TokenService>();
-
+            
             services.AddHttpContextAccessor();
             services.AddSwaggerGen(c =>
             {

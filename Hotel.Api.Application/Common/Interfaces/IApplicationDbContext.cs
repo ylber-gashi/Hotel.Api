@@ -12,5 +12,9 @@ namespace Hotel.Api.Application.Common.Interfaces
     public interface IApplicationDbContext
     {
         DbSet<User> Users { get; set; }
+        DbSet<Room> Rooms { get; set; }
+        DbSet<Reservation> Reservations { get; set; }
+        DbSet<Payment> Payments { get; set; }
+        DbSet<RoomImage> RoomImages { get; set; }
     }
 }
