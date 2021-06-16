@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hotel.Api.Application.Common.Models.Payment;
+using Hotel.Api.Application.Common.Models.Reservation;
 using Hotel.Api.Application.Common.Models.Room;
 using Hotel.Api.Domain.Entities;
 
