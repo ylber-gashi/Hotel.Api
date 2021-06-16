@@ -26,7 +26,7 @@ namespace Hotel.Api.Application.Services
         {
             var record = _mapper.Map<Room>(model);
             await _roomsRepository.InsertAsync(record);
-            model.Images.ForEach(x => _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }).GetAwaiter().GetResult());
+            model.Images.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
             return record.Id;
         }
 
