@@ -93,22 +93,14 @@ namespace Hotel.Api.Infrastructure.Repositories
         }
         public virtual async Task<TEntity> GetAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null)
         {
-            async Task<TEntity> getEntityAsync()
-            {
-                var query = func != null ? func(_table) : _table;
-                return await query.FirstOrDefaultAsync();
-            }
-            return null;
+            var query = func != null ? func(_table) : _table;
+            return await query.FirstOrDefaultAsync();
         }
         public virtual async Task<IList<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null)
         {
-            async Task<IList<TEntity>> getAllAsync()
-            {
-                var query = func != null ? func(_table) : _table;
-                return await query.ToListAsync();
-            }
+            var query = func != null ? func(_table) : _table;
+            return await query.ToListAsync();
 
-            return null;
         }
         #endregion
     }
