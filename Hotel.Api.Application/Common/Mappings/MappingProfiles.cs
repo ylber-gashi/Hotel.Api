@@ -22,6 +22,13 @@ namespace Hotel.Api.Application.Common.Mappings
             CreateMap<Payment, PaymentListModel>().ReverseMap();
             CreateMap<Payment, PaymentUpdateModel>().ReverseMap();
             #endregion
+
+            #region Reservation
+            CreateMap<Reservation, ReservationCreateModel>().ReverseMap();
+            CreateMap<Reservation, ReservationModel>().ReverseMap();
+            CreateMap<Reservation, ReservationListModel>().ReverseMap();
+            CreateMap<Reservation, ReservationUpdateModel>().ReverseMap();
+            #endregion
         }
     }
 }
