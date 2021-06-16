@@ -9,6 +9,6 @@ namespace Hotel.Api.Application.Common.Models.Payment
         public string FirstName { get; set; }
         public double Price { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-        public bool IsPayed { get; set; };
+        public bool IsPayed { get; set; }
     }
 }
