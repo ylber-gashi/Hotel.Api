@@ -34,7 +34,7 @@ namespace Hotel.Api.Application.Services
             return new BaseResponse { Success = true, Id = null };
         }
 
-        public async Task<BaseResponse> RegisterUserAsync(RegisterModel registerModel, HttpContext httpContext)
+        public async Task<BaseResponse> RegisterUserAsync(RegisterModel registerModel)
         {
             if (registerModel.Password != registerModel.ConfirmPassword)
                 throw new BadRequestException("Password", "Passwords must match");
@@ -54,9 +54,6 @@ namespace Hotel.Api.Application.Services
             var result = await _userManager.CreateAsync(user, registerModel.Password);
             await _signInManager.SignInAsync(user, false);
             var loggedInUser = await _userManager.FindByEmailAsync(user.Email);
-
-            string token = _tokenService.CreateToken(loggedInUser);
-            httpContext.Response.Cookies.Append("hotel_api_token", token);
 
             return result.Succeeded ? new BaseResponse { Success = true, Id = loggedInUser.Id } : new BaseResponse { Success = false, Id = null };
         }
@@ -78,7 +75,7 @@ namespace Hotel.Api.Application.Services
             };
         }
 
-        public async Task<LoginResultModel> LoginUserAsync(LoginModel loginModel, HttpContext httpContext)
+        public async Task<LoginResultModel> LoginUserAsync(LoginModel loginModel)
         {
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
 
@@ -98,8 +95,6 @@ namespace Hotel.Api.Application.Services
                     Email = user.Email,
                     Gender = user.Gender
                 };
-
-                httpContext.Response.Cookies.Append("hotel_api_token", token);
 
                 return new LoginResultModel { Success = true, User = loggedUser };
             }
