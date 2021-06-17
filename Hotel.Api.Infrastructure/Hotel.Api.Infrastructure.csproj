@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\Migrations\" />
-    <Folder Include="Persistence\Configurations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
@@ -28,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Hotel.Api.Application\Hotel.Api.Application.csproj" />
     <ProjectReference Include="..\Hotel.Api.Domain\Hotel.Api.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>
