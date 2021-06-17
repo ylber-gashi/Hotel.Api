@@ -15,17 +15,14 @@ namespace Hotel.Api.Application.Services
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IApplicationDbContext _context;
-        private readonly TokenService _tokenService;
 
         public AccountsService(IApplicationDbContext context,
             UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            TokenService tokenService)
+            SignInManager<User> signInManager)
         {
             this._context = context;
             this._userManager = userManager;
             this._signInManager = signInManager;
-            this._tokenService = tokenService;
         }
 
         public BaseResponse LogOutUser(HttpContext httpContext)
@@ -67,7 +64,6 @@ namespace Hotel.Api.Application.Services
 
             return new UserModel
             {
-                Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
                 Id = user.Id,
                 Email = user.Email,
@@ -86,10 +82,8 @@ namespace Hotel.Api.Application.Services
 
             if (result.Succeeded)
             {
-                var token = _tokenService.CreateToken(user);
                 var loggedUser = new UserModel
                 {
-                    Token = token,
                     Username = user.UserName,
                     Id = user.Id,
                     Email = user.Email,

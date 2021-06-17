@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Hotel.Api.Infrastructure\Hotel.Api.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+
 </Project>
