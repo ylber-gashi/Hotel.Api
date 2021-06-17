@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.Reservation;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +31,7 @@ namespace Hotel.Api.Application.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var deletedEntity = await _reservationRepository.GetByIdAsync(id);
-            if (deletedEntity != null)
+            if (deletedEntity == null)
             {
                 await _reservationRepository.DeleteAsync(deletedEntity);
                 return true;
@@ -41,55 +41,29 @@ namespace Hotel.Api.Application.Services
 
         public async Task<List<ReservationListModel>> GetAllReservationAsync()
         {
-            try
-            {
-                var result = await _reservationRepository.GetAllAsync(query => query.Include(x => x.User));
-                if (result == null)
-                {
-                    throw new Exception("No payments yet!");
-                }
-                return _mapper.Map<List<ReservationListModel>>(result);
-            }
-            catch
-            {
-                throw;
-            }
+            var result = await _reservationRepository.GetAllAsync(query => query.Include(x => x.User));
+            return _mapper.Map<List<ReservationListModel>>(result);
         }
 
         public async Task<ReservationModel> GetReservationByIdAsync(int id)
         {
-            try
+            var result = await _reservationRepository.GetAsync(query => query.Where(x => x.Id == id));
+            if (result == null)
             {
-                var result = await _reservationRepository.GetAsync(query => query.Where(x => x.Id == id));
-                if (result == null)
-                {
-                    throw new Exception("Room doesn't exist");
-                }
-                return _mapper.Map<ReservationModel>(result);
+                throw new NotFoundException("Reservation", "Reservation doesn't exist");
             }
-            catch (Exception e)
-            {
-                throw;
-            }
+            return _mapper.Map<ReservationModel>(result);
         }
 
         public async Task<ReservationUpdateModel> UpdateReservationAsync(ReservationUpdateModel model)
         {
-            try
+            var editEntity = await _reservationRepository.GetByIdAsync(model.Id);
+            if (editEntity == null)
             {
-                var editeEntity = await _reservationRepository.GetByIdAsync(model.Id);
-                if (editeEntity == null)
-                {
-                    throw new Exception("Entity doesn't exist");
-                }
-
-
-                _reservationRepository.Update(editeEntity);
+                throw new NotFoundException("Reservation", "Reservation not found");
             }
-            catch
-            {
-                throw;
-            }
+
+            _reservationRepository.Update(editEntity);
             return model;
         }
     }
