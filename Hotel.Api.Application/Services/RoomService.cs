@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.Room;
 using Hotel.Api.Domain.Entities;
@@ -25,21 +26,14 @@ namespace Hotel.Api.Application.Services
 
         public async Task<int> CreateRoomAsync(RoomCreateModel model)
         {
-            try
+            if (await CheckIfRoomNumberExists(model.RoomNumber))
             {
-                if (await CheckIfRoomNumberExists(model.RoomNumber))
-                {
-                    throw new System.Exception("Room number already exists");
-                }
-                var record = _mapper.Map<Room>(model);
-                await _roomsRepository.InsertAsync(record);
-                model.ImageUrls.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
-                return record.Id;
+                throw new NotFoundException("Room", "Room doesn't exist");
             }
-            catch
-            {
-                throw;
-            }
+            var record = _mapper.Map<Room>(model);
+            await _roomsRepository.InsertAsync(record);
+            model.ImageUrls.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
+            return record.Id;
         }
 
         public async Task<List<RoomListModel>> GetAllRoomsAsync()
@@ -50,50 +44,37 @@ namespace Hotel.Api.Application.Services
 
         public async Task<RoomModel> GetRoomByIdAsync(int id)
         {
-            try
+            var result = await _roomsRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Images));
+            if (result == null)
             {
-                var result = await _roomsRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Images));
-                if (result == null)
-                {
-                    throw new Exception("Room doesn't exist");
-                }
-                return _mapper.Map<RoomModel>(result);
+                throw new NotFoundException("Room", "Room doesn't exist");
             }
-            catch (Exception e)
-            {
-                throw;
-            }
+            return _mapper.Map<RoomModel>(result);
         }
 
         public async Task<RoomUpdateModel> UpdateRoomAsync(RoomUpdateModel model)
         {
-            try
+            var editeEntity = await _roomsRepository.GetByIdAsync(model.Id);
+            if (editeEntity == null)
             {
-                var editeEntity = await _roomsRepository.GetByIdAsync(model.Id);
-                if (editeEntity == null)
+                throw new NotFoundException("Room", "Room doesn't exist");
+            }
+
+            editeEntity.Capacity = model.Capacity;
+            editeEntity.FloorNumber = model.FloorNumber;
+            editeEntity.Price = model.Price;
+
+            _roomsRepository.Update(editeEntity);
+
+            foreach (var item in model.ImageURL)
+            {
+                var check = await _roomImageRepository.GetAsync(query => query.Where(x => x.RoomId == model.Id && x.URL == item));
+                if (check == null)
                 {
-                    throw new Exception("Entity doesn't exist");
-                }
-
-                editeEntity.Capacity = model.Capacity;
-                editeEntity.FloorNumber = model.FloorNumber;
-                editeEntity.Price = model.Price;
-
-                _roomsRepository.Update(editeEntity);
-
-                foreach (var item in model.ImageURL)
-                {
-                    var check = await _roomImageRepository.GetAsync(query => query.Where(x => x.RoomId == model.Id && x.URL == item));
-                    if (check == null)
-                    {
-                        await _roomImageRepository.InsertAsync(new RoomImage { RoomId = model.Id, URL = item });
-                    }
+                    await _roomImageRepository.InsertAsync(new RoomImage { RoomId = model.Id, URL = item });
                 }
             }
-            catch
-            {
-                throw;
-            }
+
             return model;
         }
 

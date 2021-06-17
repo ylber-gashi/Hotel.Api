@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using System.Transactions;
-using Hotel.Api.Application.Common.Interfaces;
+﻿using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Domain.Entities;
 using Hotel.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Transactions;
 
 
 namespace Hotel.Api.Infrastructure.Repositories
