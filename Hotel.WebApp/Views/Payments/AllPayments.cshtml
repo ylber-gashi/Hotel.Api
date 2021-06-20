@@ -1,0 +1,62 @@
+@using Hotel.Api.Application.Common.Models.PaymentModels
+@inject UserManager<User> userManager;
+@{
+    var user = @userManager.GetUserAsync(User).Result;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<PaymentModel>
+<div class="shadow-sm mb-5">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Payments</h3>
+        <div>
+            <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+            <a href="/reservations"><button class="btn btn-light shadow">Reservations</button></a>
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="clearfix">
+                <div class="text-md-right dataTables_filter float-right">
+                    <label>
+                        <input type="search" id="myInput"
+                               class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search">
+                    </label>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>User ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Price</th>
+                            <th>Reserved Rooms</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTable">
+                        @foreach (var payment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@payment.Id</strong>
+                                </td>
+                                <td>@payment.UserId</td>
+                                <td>@payment.FirstName</td>
+                                <td>@payment.LastName</td>
+                                <td>@payment.Price</td>
+                                <td>
+                                @foreach (var reservation in payment.Reservations)
+                                {
+                                    <a href="/rooms/@reservation.RoomId">@reservation.RoomNumber </a>
+                                }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

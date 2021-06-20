@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
-using Hotel.Api.Application.Common.Models.Payment;
+using Hotel.Api.Application.Common.Models.PaymentModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -39,10 +39,10 @@ namespace Hotel.Api.Application.Services
             return true;
         }
 
-        public async Task<List<PaymentListModel>> GetAllPaymentsAsync()
+        public async Task<List<PaymentModel>> GetAllPaymentsAsync()
         {
             var result = await _paymentRepository.GetAllAsync(query => query.Include(x => x.User));
-            return _mapper.Map<List<PaymentListModel>>(result);
+            return _mapper.Map<List<PaymentModel>>(result);
         }
 
         public async Task<PaymentModel> GetPaymentByIdAsync(int id)
@@ -63,11 +63,9 @@ namespace Hotel.Api.Application.Services
                 throw new NotFoundException("Payment", "Payment not found");
             }
 
-            editeEntity.IsPayed = model.IsPayed;
-            editeEntity.PaymentMethod = model.PaymentMethod;
-
             _paymentRepository.Update(editeEntity);
             return model;
         }
+
     }
 }

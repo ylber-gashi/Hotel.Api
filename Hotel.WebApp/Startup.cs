@@ -2,9 +2,11 @@ using Hotel.Api.Application;
 using Hotel.Api.Domain.Entities;
 using Hotel.Api.Infrastructure;
 using Hotel.Api.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +32,12 @@ namespace Hotel.WebApp
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["DbInfo:ConnectionString"]));
             services.AddIdentity<User, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddMvc();
+            services.AddMvc(options => {
+                var policy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
             services.AddControllersWithViews();
             services.AddInfrastructure(Configuration);
         }

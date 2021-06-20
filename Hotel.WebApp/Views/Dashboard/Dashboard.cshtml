@@ -1,0 +1,160 @@
+@using Hotel.Api.Application.Common.Models.DashboardModels;
+@using Hotel.Api.Domain.Entities;
+@using Hotel.Api.Domain.Enumerations; 
+@inject UserManager<User> userManager;
+@{ var user = @userManager.GetUserAsync(User).Result;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml"; }
+
+@model DashboardViewModel
+<div id="wrapper" class="shadow-sm mb-5">
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+            <h3>Dashboard</h3>
+            <div>
+                <a href="/users"><button class="btn btn-light shadow mr-2">Users</button></a>
+                <a href="/rooms"><button class="btn btn-light shadow">Rooms</button></a>
+                
+            </div>
+        </div>
+        <div id="content">
+            <div class="container-fluid">
+                <div class="col-md-12">
+                    <section class="article-list bg-white">
+                        <div class="container">
+                            <div class="d-flex justify-content-between align-items-center border-bottom">
+                                <h2>Hotel Rooms</h2>
+                                <a href="/rooms"><button class="btn btn-dark">All Rooms</button></a>
+                            </div>
+                            <div class="row articles mt-2">
+                                @{ var count = Model.Rooms.Count;
+                                    var loop = 0;
+                                    if (count >= 3)
+                                    {
+                                        loop = 3;
+                                    }
+                                    else
+                                    {
+                                        loop = count;
+                                    }
+                                    for (int i = 0; i < loop; i++)
+                                    {
+                                        var room = Model.Rooms[i];
+                        <div class="col-sm-6 col-md-4 item shadow-sm pb-2">
+                            <a href="/rooms/@room.Id">
+                                <img class="img-fluid" src="@room.Images.FirstOrDefault()" />
+                            </a>
+                            <a href="/course/@room.Id">
+                                <h3 class="name">@room.RoomType</h3>
+                            </a>
+                            <p class="description">@room.RoomNumber</p><a class="action"
+                                                                                   href="/rooms/@room.Id"><i class="fa fa-arrow-circle-right"></i></a>
+                        </div> } }
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="row pb-5">
+                    <div class="col-md-6">
+                        <div class="card shadow border-left-warning py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        <div class="text-uppercase text-warning font-weight-bold text-xs mb-1">
+                                            <span>all rooms</span>
+                                        </div>
+                                        <div class="text-dark font-weight-bold h5 mb-0"><span>@Model.AllRooms</span></div>
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-comments fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow border-left-info py-2">
+                            <div class="card-body">
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col mr-2">
+                                        @{ 
+                                            var bussyRooms = Math.Round((Model.BusyRooms / Model.AllRooms), 2);
+                                            if (double.IsNaN(bussyRooms))
+                                            {
+                                                bussyRooms = 0;
+                                            }
+                                <div class="text-uppercase text-info font-weight-bold text-xs mb-1"><span>Taken Rooms</span></div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="text-dark font-weight-bold h5 mb-0 mr-3"><span>@bussyRooms%</span></div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm">
+                                                        <div class="progress-bar bg-info" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: @bussyRooms%;"><span class="sr-only">@bussyRooms%</span></div>
+                                                        </div>
+                                                    </div>
+                                                </div> }
+                                    </div>
+                                    <div class="col-auto"><i class="fas fa-clipboard-list fa-2x text-gray-300"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+    <div class="row pb-4">
+        <div class="col-md-4 offset-xl-0">
+            <p>
+                <a class="btn btn-success btn-circle ml-1" role="button"><i class="fas fa-check text-white"></i></a> <a href="/rooms/"><strong> Rooms</strong></a> |<small> <a href="/rooms/add">Add Room</a></small>
+            </p>
+        </div>
+        <div class="col-md-4 offset-xl-0">
+            <p>
+                <a class="btn btn-success btn-circle ml-1" role="button"><i class="fas fa-check text-white"></i></a> <a href="/payments"><strong> Payments</strong></a> |<small> <a href="/payments">All Payments</a></small>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <p>
+                <a href="/reservations" class="btn btn-info btn-circle ml-1" role="button">
+                    <i class="fas fa-info-circle text-white"></i>
+                </a><a href="/reservations"><strong> Reservations</strong></a> |<small>
+                    <a href="/reservations/add">Add Reservation</a>
+                </small>
+            </p>
+        </div>
+    </div>}
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="text-primary font-weight-bold m-0">Rooms By Floor</h6>
+                            </div>
+                            <div class="card-body">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var floorRooms = 0.0;
+                                    var counter = 0.0;
+                                    foreach (var room in Model.Rooms)
+                                    {
+                                        if (room.FloorNumber == i)
+                                            floorRooms++;
+                                        if (room.FloorNumber == i && room.Status != RoomStatus.NotAvailable)
+                                            counter++;
+                                    }
+                                    var result = Math.Round(((counter / floorRooms) * 100), 2);
+                                    if (double.IsNaN(result))
+                                    {
+                                        result = 0;
+                                    }
+                    <h4 class="small font-weight-bold">Floor #@i taken rooms<span class="float-right">@result%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-danger" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"
+                                             style="width: @result%;"><span class="sr-only">@result%</span></div>
+                                        </div>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

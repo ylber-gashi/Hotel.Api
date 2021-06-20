@@ -1,4 +1,4 @@
-﻿using Hotel.Api.Application.Common.Models.Room;
+﻿using Hotel.Api.Application.Common.Models.RoomModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

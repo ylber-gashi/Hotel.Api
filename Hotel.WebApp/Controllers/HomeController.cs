@@ -17,8 +17,7 @@ namespace Hotel.WebApp.Controllers
         [Route("")]
         public IActionResult Index()
         {
-
-            return View();
+            return RedirectToAction("Dashboard", "Dashboard");
         }
 
         public IActionResult Privacy()

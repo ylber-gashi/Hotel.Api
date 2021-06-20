@@ -1,11 +1,10 @@
-﻿using Hotel.Api.Application.Common.Exceptions;
-using Hotel.Api.Application.Common.Interfaces;
+﻿using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models;
 using Hotel.Api.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hotel.Api.Application.Services
@@ -13,89 +12,70 @@ namespace Hotel.Api.Application.Services
     public class AccountsService
     {
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly IApplicationDbContext _context;
 
         public AccountsService(IApplicationDbContext context,
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+             RoleManager<IdentityRole> roleManager)
         {
             this._context = context;
             this._userManager = userManager;
             this._signInManager = signInManager;
+            this._roleManager = roleManager;
         }
 
-        public BaseResponse LogOutUser(HttpContext httpContext)
+        public async Task<IdentityResult> RegisterUserAsync(RegisterModel registerModel)
         {
-            httpContext.Response.Cookies.Append("hotel_api_token", "noValue");
-            return new BaseResponse { Success = true, Id = null };
-        }
-
-        public async Task<BaseResponse> RegisterUserAsync(RegisterModel registerModel)
-        {
-            if (registerModel.Password != registerModel.ConfirmPassword)
-                throw new BadRequestException("Password", "Passwords must match");
-
-            if (await _context.Users.FirstOrDefaultAsync(u => u.Email == registerModel.Email) != null)
-                throw new BadRequestException("Email", "Email must be unique");
-
-            if (await _context.Users.FirstOrDefaultAsync(u => u.UserName == registerModel.UserName) != null)
-                throw new BadRequestException("Username", "Username must be unique");
-
             var user = new User
             {
-                UserName = registerModel.UserName,
+                FirstName = registerModel.FirstName,
+                LastName = registerModel.LastName,
+                UserName = registerModel.Email,
                 Email = registerModel.Email,
+                Gender = registerModel.Gender
             };
-
-            var result = await _userManager.CreateAsync(user, registerModel.Password);
-            await _signInManager.SignInAsync(user, false);
-            var loggedInUser = await _userManager.FindByEmailAsync(user.Email);
-
-            return result.Succeeded ? new BaseResponse { Success = true, Id = loggedInUser.Id } : new BaseResponse { Success = false, Id = null };
-        }
-
-        public async Task<UserModel> GetCurrentUserAsync(ClaimsPrincipal currentUser)
-        {
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == currentUser.FindFirstValue(ClaimTypes.Email));
-
-            if (user is null)
-                throw new NotFoundException("User", "There is no user logged in");
-
-            return new UserModel
+            var result = new IdentityResult();
+            if (!_userManager.Users.Any())
             {
-                Username = user.UserName,
-                Id = user.Id,
-                Email = user.Email,
-                Gender = user.Gender
-            };
-        }
+                result = await _userManager.CreateAsync(user, registerModel.Password);
 
-        public async Task<LoginResultModel> LoginUserAsync(LoginModel loginModel)
-        {
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
-
-            if (user == null)
-                throw new NotFoundException("Login", "Incorrect email or password");
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginModel.Password, false);
-
-            if (result.Succeeded)
-            {
-                var loggedUser = new UserModel
-                {
-                    Username = user.UserName,
-                    Id = user.Id,
-                    Email = user.Email,
-                    Gender = user.Gender
-                };
-
-                return new LoginResultModel { Success = true, User = loggedUser };
+                IdentityRole identityRole = new IdentityRole { Name = "Admin" };
+                await _roleManager.CreateAsync(identityRole);
+                await _userManager.AddToRoleAsync(user, "Admin");
             }
             else
             {
-                return new LoginResultModel { Success = false, User = null };
+                result = await _userManager.CreateAsync(user, registerModel.Password);
+                var checkRole = await _roleManager.RoleExistsAsync("Normal");
+                if (!checkRole)
+                {
+                    IdentityRole identityRole = new IdentityRole { Name = "Normal" };
+                    await _roleManager.CreateAsync(identityRole);
+                }
+                await _userManager.AddToRoleAsync(user, "Normal");
+                await _signInManager.SignInAsync(user, isPersistent: false);
             }
+            return result;
+        }
+
+        public async Task LogOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+
+        public async Task<SignInResult> LoginUserAsync(LoginModel loginModel)
+        {
+            var result = await _signInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password, false, false);
+            return result;
         }
     }
 }

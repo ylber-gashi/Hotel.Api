@@ -32,12 +32,6 @@ namespace Hotel.Api.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("InsertedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsPayed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -50,17 +44,14 @@ namespace Hotel.Api.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Payments");
                 });
@@ -138,6 +129,9 @@ namespace Hotel.Api.Infrastructure.Persistence.Migrations
                     b.Property<int>("RoomType")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
@@ -203,8 +197,8 @@ namespace Hotel.Api.Infrastructure.Persistence.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -394,7 +388,7 @@ namespace Hotel.Api.Infrastructure.Persistence.Migrations
 
                     b.HasOne("Hotel.Api.Domain.Entities.User", "User")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
-using Hotel.Api.Application.Common.Models.Room;
+using Hotel.Api.Application.Common.Models.RoomModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,7 +32,7 @@ namespace Hotel.Api.Application.Services
             }
             var record = _mapper.Map<Room>(model);
             await _roomsRepository.InsertAsync(record);
-            model.ImageUrls.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
+            model.FirstImage.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
             return record.Id;
         }
 

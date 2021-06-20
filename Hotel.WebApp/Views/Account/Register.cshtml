@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Register";
+}
+@model Hotel.Api.Application.Common.Models.RegisterModel
+
+<div class="login-container">
+    <div class="myCard">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="myLeftCtn">
+                    <form class="myForm text-center" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <header>Sign Up</header>
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input class="myInput" asp-for="FirstName" placeholder="First Name">
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input class="myInput" asp-for="LastName" placeholder="Last Name">
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-venus-mars"></i>
+                            <select class="myInput" aria-label="Default select example"
+                                    asp-for="Gender">
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>
+                                <option value="3">Rather Not Say</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-user"></i>
+                            <input class="myInput" asp-for="Email" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-envelope"></i>
+                            <input class="myInput" asp-for="Password" placeholder="Password">
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-envelope"></i>
+                            <input class="myInput" asp-for="ConfirmPassword" placeholder="Confirm Password">
+                        </div>
+                        <input type="submit" class="butt" value="Register">
+                    </form>
+                    <div class="mt-5 text-center">
+                        <a class="m-auto" href="/Account/login">Already have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="myRightCtn">
+                    <img src="https://www.mcicon.com/wp-content/uploads/2020/12/Architecture_Hotel_1-copy-15.jpg"
+                        id="register-logo" alt="Hotel Logo">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

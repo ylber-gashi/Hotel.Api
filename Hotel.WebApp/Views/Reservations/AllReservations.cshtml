@@ -1,0 +1,78 @@
+@using Hotel.Api.Application.Common.Models.ReservationModels
+@inject UserManager<User> userManager;
+@{
+    var user = @userManager.GetUserAsync(User).Result;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<ReservationModel>
+<div class="shadow-sm mb-5">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>Reservations</h3>
+        <div>
+            <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                <a href="/reservations/add"><button class="btn btn-light shadow">Add Reservation</button></a>
+            }
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="text-danger">@ViewBag.ErrorMessage</div>
+            <div class="clearfix">
+                <div class="text-md-right dataTables_filter float-right">
+                    <label>
+                        <input type="search" id="myInput"
+                               class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search">
+                    </label>
+                </div>
+                <input id="btnGet" type="button" class="float-left btn btn-light shadow-sm" value="Pay" />
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Reservation ID</th>
+                            <th>CheckIn Date</th>
+                            <th>CheckOut Date</th>
+                            <th>Room Number</th>
+                            <th>Room Price</th>
+                            <th>Reserved By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTable">
+                        @foreach (var reservation in Model)
+                        {
+                        <tr>
+                            <td><input type="checkbox"/></td>
+                            <td>
+                                <strong>@reservation.Id</strong>
+                            </td>
+                            <td>@reservation.CheckInDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
+                            <td>@reservation.CheckOutDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
+                            <td><a href="/rooms/@reservation.RoomId">@reservation.RoomNumber</a></td>
+                            <td>@reservation.RoomPrice</td>
+                            <td>@reservation.FirstName @reservation.LastName</td>
+                            @{
+                                if (user.Id == reservation.UserId || User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <a asp-action="DeleteReservation" asp-controller="Reservations"
+                                           asp-route-reservationId="@reservation.Id">
+                                            <button class="btn-sm btn-danger">
+                                                Delete
+                                            </button>
+                                        </a>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,8 +9,6 @@ namespace Hotel.Api.Infrastructure.Persistence.Configurations
         {
             builder.HasOne(x => x.User).WithMany(x => x.Payments).HasForeignKey(x => x.UserId);
             builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.PaymentMethod).IsRequired();
-            builder.Property(x => x.IsPayed).IsRequired();
             builder.Property(x => x.Price).IsRequired();
         }
     }

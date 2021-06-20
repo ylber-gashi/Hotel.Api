@@ -23,6 +23,8 @@ namespace Hotel.Api.Infrastructure
             services.AddScoped(typeof(IEntityRepository<>),typeof(EntityRepository<>));
             services.AddScoped<IRoomService, RoomService>();
             services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<DashboardService>();
             services.AddScoped<AccountsService>();
 
             return services;

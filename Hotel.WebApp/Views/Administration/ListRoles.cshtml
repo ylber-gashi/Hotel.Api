@@ -1,0 +1,25 @@
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model IEnumerable<IdentityRole>
+<div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+    <h3>List of Roles</h3>
+    <a href="/dashboard"><button class="btn btn-light shadow">Dashboard</button></a>
+</div>
+<div id="content">
+    <ul class="list-group">
+        @if (Model.Any())
+        {
+            foreach (var role in Model)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h4>@role.Name</h4>
+                    <div class="d-flex align-items-center">
+                        <a class="m-3 float-right" asp-controller="Administration" asp-action="EditRole" asp-route-roleId="@role.Id"><button
+                        class="btn btn-light shadow">Edit</button></a>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>

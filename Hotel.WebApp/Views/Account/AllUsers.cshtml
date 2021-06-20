@@ -1,0 +1,54 @@
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+@model List<User>
+<div class="container-fluid">
+    <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
+        <h3>All Users</h3>
+        <a href="/dashboard"><button class="btn btn-light shadow">Dashboard</button></a>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="text-danger">@ViewBag.ErrorMessage</div>
+            <div class="clearfix">
+                <div class="text-md-right dataTables_filter float-right"><label><input type="search" id="myInput"
+                            class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <th>Actions</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody id="myTable">
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td><strong>@user.FirstName @user.LastName</strong></td>
+                                <td>@user.Email</td>
+                                <td>@user.Gender</td>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <form asp-action="DeleteUser" asp-controller="Administration" method="POST">
+                                            <input type="hidden" name="userId" value='@user.Id'>
+                                            <button type="submit" class="btn btn-danger"onclick="return confirm('Are you sure you want to delete: @user.FirstName @user.LastName?')">Delete</button>
+                                        </form>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

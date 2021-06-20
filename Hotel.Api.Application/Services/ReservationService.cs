@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
-using Hotel.Api.Application.Common.Models.Reservation;
+using Hotel.Api.Application.Common.Models.ReservationModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -39,10 +39,10 @@ namespace Hotel.Api.Application.Services
             return false;
         }
 
-        public async Task<List<ReservationListModel>> GetAllReservationAsync()
+        public async Task<List<ReservationModel>> GetAllReservationAsync()
         {
             var result = await _reservationRepository.GetAllAsync(query => query.Include(x => x.User));
-            return _mapper.Map<List<ReservationListModel>>(result);
+            return _mapper.Map<List<ReservationModel>>(result);
         }
 
         public async Task<ReservationModel> GetReservationByIdAsync(int id)
