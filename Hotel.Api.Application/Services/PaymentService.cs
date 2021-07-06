@@ -4,6 +4,7 @@ using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.PaymentModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Hotel.Api.Application.Services
         public async Task<int> CreatePaymentAsync(PaymentCreateModel model)
         {
             var record = _mapper.Map<Payment>(model);
+            record.InsertDate = DateTime.Now;
             await _paymentRepository.InsertAsync(record);
             return record.Id;
         }
@@ -63,9 +65,10 @@ namespace Hotel.Api.Application.Services
                 throw new NotFoundException("Payment", "Payment not found");
             }
 
+            editeEntity.Price = model.Total;
+            editeEntity.UpdateDate = DateTime.Now;
             _paymentRepository.Update(editeEntity);
             return model;
         }
-
     }
 }

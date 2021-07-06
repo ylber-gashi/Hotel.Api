@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
+using Hotel.Api.Application.Common.Models.PaymentModels;
 using Hotel.Api.Application.Common.Models.ReservationModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,30 +14,41 @@ namespace Hotel.Api.Application.Services
     public class ReservationService : IReservationService
     {
         private readonly IEntityRepository<Reservation> _reservationRepository;
+        private readonly IPaymentService _paymentService;
+        private readonly IRoomService _roomService;
         private readonly IMapper _mapper;
 
-        public ReservationService(IEntityRepository<Reservation> reservationRepository, IMapper mapper)
+        public ReservationService(IEntityRepository<Reservation> reservationRepository, IMapper mapper, IPaymentService paymentService, IRoomService roomService = null)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
+            _paymentService = paymentService;
+            _roomService = roomService;
         }
 
         public async Task<int> CreateReservationAsync(ReservationCreateModel model)
         {
+            var paymentId = await _paymentService.CreatePaymentAsync(new PaymentCreateModel { UserId = model.UserId });
+
             var record = _mapper.Map<Reservation>(model);
+            record.PaymentId = paymentId;
             await _reservationRepository.InsertAsync(record);
+            
+            var roomPrice = await _roomService.GetRoomByIdAsync(model.RoomId);
+            var updatePayment = await _paymentService.UpdatePaymentAsync(new PaymentUpdateModel { Id = paymentId, Total = roomPrice.Price });
+            
             return record.Id;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             var deletedEntity = await _reservationRepository.GetByIdAsync(id);
-            if (deletedEntity == null)
+            if (deletedEntity != null)
             {
                 await _reservationRepository.DeleteAsync(deletedEntity);
                 return true;
             }
-            return false;
+            throw new NotFoundException("Reservation", "Reservation doesn't exist");
         }
 
         public async Task<List<ReservationModel>> GetAllReservationAsync()

@@ -110,5 +110,11 @@ namespace Hotel.Api.Application.Services
             }
             return false;
         }
+
+        public async Task<List<int>> GetAllRoomIdsAsync()
+        {
+            var result = await _roomsRepository.GetAllAsync();
+            return result.Select(x => x.Id).ToList();
+        }
     }
 }
