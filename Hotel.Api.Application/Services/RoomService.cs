@@ -38,7 +38,7 @@ namespace Hotel.Api.Application.Services
 
         public async Task<List<RoomListModel>> GetAllRoomsAsync()
         {
-            var result = await _roomsRepository.GetAllAsync();
+            var result = await _roomsRepository.GetAllAsync(query => query.Include(x => x.Images));
             return _mapper.Map<List<RoomListModel>>(result);
         }
 
@@ -87,6 +87,18 @@ namespace Hotel.Api.Application.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<int> AddRoomImagesAsync(int roomId, string imageURL)
+        {
+            var room = await _roomsRepository.GetByIdAsync(roomId);
+            if (room == null)
+            {
+                throw new NotFoundException("Room", "Room doesn't exist");
+            }
+
+            await _roomImageRepository.InsertAsync(new RoomImage() { RoomId = roomId, URL = imageURL });
+            return roomId;
         }
 
         public async Task<bool> CheckIfRoomNumberExists(int roomNumber)

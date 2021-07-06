@@ -11,5 +11,6 @@ namespace Hotel.Api.Application.Common.Interfaces
         Task<RoomModel> GetRoomByIdAsync(int id);
         Task<RoomUpdateModel> UpdateRoomAsync(RoomUpdateModel model);
         Task<bool> DeleteAsync(int id);
+        Task<int> AddRoomImagesAsync(int roomId, string imageURL);
     }
 }

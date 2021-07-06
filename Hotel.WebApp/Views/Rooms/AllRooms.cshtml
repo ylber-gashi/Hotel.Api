@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
-@model List<RoomModel>
+@model List<RoomListModel>
 <div class="shadow-sm mb-5">
     <section class="article-list bg-white">
         <div class="d-sm-flex justify-content-between align-items-center p-3 gradient-primary">
@@ -20,12 +20,12 @@
                 @foreach (var room in Model)
                 {
                     <div class="col-sm-6 col-md-4 item shadow-sm pb-2">
-                        <a href="/rooms/@room.Id"><img class="img-fluid" src="@room.Images.FirstOrDefault()" /></a>
+                        <a href="/rooms/@room.Id"><img class="img-fluid" src="@room.Images.ElementAt(0)" /></a>
                         <a href="/rooms/@room.Id"><h3 class="name">Room Number: @room.RoomNumber</h3></a>
                         <p class="description">Room Type: @room.RoomType</p>
-                        <form method="POST" asp-action="DeleteRoom" asp-controller="Rooms">
+                        <form method="post" asp-action="DeleteRoom" asp-controller="Rooms">
                             <input type="hidden" name="RoomId" value="@room.Id" />
-                            <button class="btn btn-light m-2" type="submit"><i class="fa fa-trash-alt"></i></button> 
+                            <button class="btn btn-light m-2" type="submit"><i class="fa fa-trash-alt"></i></button>
                         </form>
                     </div>
                 }

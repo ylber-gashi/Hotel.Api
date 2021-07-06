@@ -2,8 +2,6 @@
 using Hotel.Api.Application.Common.Models.RoomModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Hotel.Api.Domain.Enumerations;
-using System.Collections.Generic;
 
 namespace Hotel.Api.Controllers
 {
@@ -19,36 +17,7 @@ namespace Hotel.Api.Controllers
         [HttpGet("rooms")]
         public async Task<IActionResult> AllRooms()
         {
-            var rooms = new List<RoomModel>()
-            {
-                new RoomModel
-            {
-                Id = 1,
-                RoomNumber = 2,
-                RoomType = RoomTypes.NORMAL,
-                FloorNumber = 4,
-                Capacity = 4,
-                Price = 50,
-                Images = new List<string>
-                {
-                    "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg"
-                }
-            },
-                new RoomModel
-            {
-                Id = 1,
-                RoomNumber = 2,
-                RoomType = RoomTypes.NORMAL,
-                FloorNumber = 4,
-                Capacity = 4,
-                Price = 50,
-                Images = new List<string>
-                {
-                    "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg"
-                }
-            }
-        };
-            return View(rooms);
+            return View(await _roomService.GetAllRoomsAsync());
         }
 
         [HttpGet("rooms/add")]
@@ -60,47 +29,39 @@ namespace Hotel.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRoom(RoomCreateModel roomModel)
         {
-            //save room in db
-            return RedirectToAction("AllRooms");
+            var result = await _roomService.CreateRoomAsync(roomModel);
+            return RedirectToAction("SingleRoom", new { id = result });
         }
 
         [HttpGet("rooms/{id}")]
         public async Task<IActionResult> SingleRoom(int id)
         {
-            var roomModel = new RoomModel
-            {
-                Id = 1,
-                RoomNumber = 2,
-                RoomType = RoomTypes.NORMAL,
-                FloorNumber = 4,
-                Capacity = 4,
-                Price = 50,
-                Images = new List<string>
-                {
-                    "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg"
-                }
-            };
-            return View(roomModel);
+            var room = await _roomService.GetRoomByIdAsync(id);
+            return View(room);
         }
 
-        [HttpPost]
+        [HttpPost("images")]
         public async Task<IActionResult> AddImage(int roomId, string imageURL)
         {
-            // The Images list of this room should be updated .Add(imageURL)
-            return RedirectToAction("SingleRoom", new { id = 1 });
+            var result = await _roomService.AddRoomImagesAsync(roomId, imageURL);
+            return RedirectToAction("SingleRoom", new { id = result });
         }
 
-
-        [HttpPost]
+        [HttpPost("delete")]
         public async Task<IActionResult> DeleteRoom(int roomId)
         {
-            return RedirectToAction("AllRooms");
+            var result = await _roomService.DeleteAsync(roomId);
+            if (result)
+            {
+                return RedirectToAction("AllRooms");
+            }
+            return BadRequest(roomId);
         }
 
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateAsync([FromBody] RoomUpdateModel model)
-        //{
-        //    return Ok(await _roomService.UpdateRoomAsync(model));
-        //}
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync([FromBody] RoomUpdateModel model)
+        {
+            return Ok(await _roomService.UpdateRoomAsync(model));
+        }
     }
 }
