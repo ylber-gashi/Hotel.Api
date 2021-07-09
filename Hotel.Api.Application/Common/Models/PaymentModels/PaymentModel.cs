@@ -11,6 +11,7 @@ namespace Hotel.Api.Application.Common.Models.PaymentModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public double Price { get; set; }
+        public bool IsPayed { get; set; }
         public List<ReservationModel> Reservations { get; set; }
     }
 }

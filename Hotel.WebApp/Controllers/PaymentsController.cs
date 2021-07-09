@@ -1,10 +1,6 @@
 ﻿using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.PaymentModels;
-using Hotel.Api.Application.Common.Models.ReservationModels;
-using Hotel.Api.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Hotel.Api.Controllers
@@ -18,17 +14,18 @@ namespace Hotel.Api.Controllers
             _paymentService = paymentService;
         }
 
-        [HttpGet("payments")]
-        public async Task<IActionResult> AllPayments()
+        [HttpGet("payments/{id}")]
+        public async Task<IActionResult> AllPayments(string id)
         {
-            var result = await _paymentService.GetAllPaymentsAsync();
+            var result = await _paymentService.GetAllPaymentsAsync(id);
             return View(result);
         }
 
-        [HttpGet("id")]
+        [HttpGet("payments/reservations/{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return Ok(await _paymentService.GetPaymentByIdAsync(id));
+            var result = await _paymentService.GetPaymentByIdAsync(id);
+            return View("../Reservations/AllReservations", result);
         }
 
         [HttpPut]

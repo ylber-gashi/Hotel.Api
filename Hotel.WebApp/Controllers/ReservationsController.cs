@@ -16,10 +16,10 @@ namespace Hotel.Api.Controllers
             _roomService = roomService;
         }
 
-        [HttpGet("reservations")]
-        public async Task<IActionResult> AllReservations()
+        [HttpGet("reservations/{userId}")]
+        public async Task<IActionResult> AllReservations(string userId)
         {
-            var result = await _reservationService.GetAllReservationAsync();
+            var result = await _reservationService.GetAllReservationAsync(userId);
             return View(result);
         }
 
@@ -37,14 +37,21 @@ namespace Hotel.Api.Controllers
         public async Task<IActionResult> AddReservation(AddReservationModel model)
         {
             var result = await _reservationService.CreateReservationAsync(model.ReservationCreateModel);
-            return RedirectToAction("AllReservations");
+            return RedirectToAction("GetByIdAsync", "Payments", result);
         }
 
-        [HttpDelete("id")]
+        [HttpGet("/delete")]
         public async Task<IActionResult> DeleteReservation(int reservationId)
         {
             var result = await _reservationService.DeleteAsync(reservationId);
             return RedirectToAction("AllReservations");
+        }
+
+        [HttpGet("/pay/{id}")]
+        public async Task<IActionResult> Pay(int id)
+        {
+            var result = await _reservationService.PayAsync(id);
+            return RedirectToAction("Dashboard","Dashboard");
         }
 
         //[HttpPut]

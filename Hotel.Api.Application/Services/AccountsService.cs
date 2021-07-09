@@ -49,6 +49,11 @@ namespace Hotel.Api.Application.Services
             else
             {
                 result = await _userManager.CreateAsync(user, registerModel.Password);
+                if (!result.Succeeded)
+                {
+                    return null;
+                }
+
                 var checkRole = await _roleManager.RoleExistsAsync("Normal");
                 if (!checkRole)
                 {

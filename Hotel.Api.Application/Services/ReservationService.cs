@@ -14,16 +14,18 @@ namespace Hotel.Api.Application.Services
     public class ReservationService : IReservationService
     {
         private readonly IEntityRepository<Reservation> _reservationRepository;
+        private readonly IEntityRepository<Payment> _paymentRepository;
         private readonly IPaymentService _paymentService;
         private readonly IRoomService _roomService;
         private readonly IMapper _mapper;
 
-        public ReservationService(IEntityRepository<Reservation> reservationRepository, IMapper mapper, IPaymentService paymentService, IRoomService roomService = null)
+        public ReservationService(IEntityRepository<Reservation> reservationRepository, IMapper mapper, IPaymentService paymentService, IRoomService roomService = null, IEntityRepository<Payment> paymentRepository = null)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
             _paymentService = paymentService;
             _roomService = roomService;
+            _paymentRepository = paymentRepository;
         }
 
         public async Task<int> CreateReservationAsync(ReservationCreateModel model)
@@ -33,11 +35,11 @@ namespace Hotel.Api.Application.Services
             var record = _mapper.Map<Reservation>(model);
             record.PaymentId = paymentId;
             await _reservationRepository.InsertAsync(record);
-            
+
             var roomPrice = await _roomService.GetRoomByIdAsync(model.RoomId);
             var updatePayment = await _paymentService.UpdatePaymentAsync(new PaymentUpdateModel { Id = paymentId, Total = roomPrice.Price });
-            
-            return record.Id;
+
+            return updatePayment.Id;
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -51,9 +53,9 @@ namespace Hotel.Api.Application.Services
             throw new NotFoundException("Reservation", "Reservation doesn't exist");
         }
 
-        public async Task<List<ReservationModel>> GetAllReservationAsync()
+        public async Task<List<ReservationModel>> GetAllReservationAsync(string id)
         {
-            var result = await _reservationRepository.GetAllAsync(query => query.Include(x => x.User));
+            var result = await _reservationRepository.GetAllAsync(query => query.Where(x => x.UserId == id).Include(x => x.User));
             return _mapper.Map<List<ReservationModel>>(result);
         }
 
@@ -77,6 +79,14 @@ namespace Hotel.Api.Application.Services
 
             _reservationRepository.Update(editEntity);
             return model;
+        }
+
+        public async Task<bool> PayAsync(int id)
+        {
+            var editedEntity = await _paymentRepository.GetByIdAsync(id);
+            editedEntity.IsPayed = true;
+            _paymentRepository.Update(editedEntity);
+            return true;
         }
     }
 }

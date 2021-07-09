@@ -2,7 +2,6 @@ using Hotel.Api.Application;
 using Hotel.Api.Domain.Entities;
 using Hotel.Api.Infrastructure;
 using Hotel.Api.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

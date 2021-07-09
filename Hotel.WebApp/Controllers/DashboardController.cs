@@ -1,12 +1,6 @@
-﻿using Hotel.Api.Application.Common.Models.DashboardModels;
-using Hotel.Api.Application.Services;
-using Hotel.Api.Domain.Entities;
+﻿using Hotel.Api.Application.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hotel.WebApp.Controllers

@@ -41,15 +41,15 @@ namespace Hotel.Api.Application.Services
             return true;
         }
 
-        public async Task<List<PaymentModel>> GetAllPaymentsAsync()
+        public async Task<List<PaymentModel>> GetAllPaymentsAsync(string id)
         {
-            var result = await _paymentRepository.GetAllAsync(query => query.Include(x => x.User));
+            var result = await _paymentRepository.GetAllAsync(query => query.Where(x => x.UserId == id).Include(x => x.User));
             return _mapper.Map<List<PaymentModel>>(result);
         }
 
         public async Task<PaymentModel> GetPaymentByIdAsync(int id)
         {
-            var result = await _paymentRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Reservations).ThenInclude(x => x.Room));
+            var result = await _paymentRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Reservations));
             if (result == null)
             {
                 throw new NotFoundException("Payment", "Payment not found");

@@ -29,6 +29,10 @@ namespace Hotel.WebApp.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _accountsService.RegisterUserAsync(registerModel);
+                if(result == null)
+                {
+                    return View(registerModel);
+                }
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Dashboard", "Dashboard");
