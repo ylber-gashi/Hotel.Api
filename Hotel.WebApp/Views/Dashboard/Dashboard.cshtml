@@ -41,9 +41,9 @@
                                         var room = Model.Rooms[i];
                         <div class="col-sm-6 col-md-4 item shadow-sm pb-2">
                             <a href="/rooms/@room.Id">
-                                <img class="img-fluid" src="@room.Images.FirstOrDefault()" />
+                                <img class="img-fluid" src="@room.Images.FirstOrDefault().URL" />
                             </a>
-                            <a href="/course/@room.Id">
+                            <a href="/rooms/@room.Id">
                                 <h3 class="name">@room.RoomType</h3>
                             </a>
                             <p class="description">@room.RoomNumber</p><a class="action"

@@ -32,14 +32,24 @@ namespace Hotel.Api.Application.Services
             }
             var record = _mapper.Map<Room>(model);
             await _roomsRepository.InsertAsync(record);
-            model.FirstImage.ForEach(async x => await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = x }));
+            foreach (var image in model.FirstImage)
+            {
+                await _roomImageRepository.InsertAsync(new RoomImage { RoomId = record.Id, URL = image });
+            }
             return record.Id;
         }
 
         public async Task<List<RoomListModel>> GetAllRoomsAsync()
         {
             var result = await _roomsRepository.GetAllAsync(query => query.Include(x => x.Images));
-            return _mapper.Map<List<RoomListModel>>(result);
+            var mappedResult = _mapper.Map<List<RoomListModel>>(result);
+
+            foreach(var item in mappedResult)
+            {
+                var images = result.Where(x => x.Id == item.Id).Select(x => x.Images).FirstOrDefault();
+                item.Images.AddRange(images.Select(x => x.URL));
+            }
+            return mappedResult;
         }
 
         public async Task<RoomModel> GetRoomByIdAsync(int id)
@@ -49,7 +59,9 @@ namespace Hotel.Api.Application.Services
             {
                 throw new NotFoundException("Room", "Room doesn't exist");
             }
-            return _mapper.Map<RoomModel>(result);
+            var mapped = _mapper.Map<RoomModel>(result);
+            mapped.Images = result.Images.Select(x => x.URL).ToList();
+            return mapped;
         }
 
         public async Task<RoomUpdateModel> UpdateRoomAsync(RoomUpdateModel model)

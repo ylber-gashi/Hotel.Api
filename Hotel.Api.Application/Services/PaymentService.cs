@@ -2,6 +2,7 @@
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.PaymentModels;
+using Hotel.Api.Application.Common.Models.ReservationModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,12 +50,21 @@ namespace Hotel.Api.Application.Services
 
         public async Task<PaymentModel> GetPaymentByIdAsync(int id)
         {
-            var result = await _paymentRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Reservations));
+            var result = await _paymentRepository.GetAsync(query => query.Where(x => x.Id == id).Include(x => x.Reservations).ThenInclude(x => x.Room));
             if (result == null)
             {
                 throw new NotFoundException("Payment", "Payment not found");
             }
-            return _mapper.Map<PaymentModel>(result);
+            var mappedResult = _mapper.Map<PaymentModel>(result);
+            mappedResult.Reservations.AddRange(result.Reservations.Select(x => 
+                new ReservationModel 
+                { 
+                    CheckInDate = x.CheckInDate,
+                    CheckOutDate = x.CheckOutDate, 
+                    RoomId = x.RoomId,
+                    RoomPrice = x.Room.Price
+                }));
+            return mappedResult;
         }
 
         public async Task<PaymentUpdateModel> UpdatePaymentAsync(PaymentUpdateModel model)

@@ -5,6 +5,7 @@ using Hotel.Api.Application.Common.Models.PaymentModels;
 using Hotel.Api.Application.Common.Models.ReservationModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,6 +31,16 @@ namespace Hotel.Api.Application.Services
 
         public async Task<int> CreateReservationAsync(ReservationCreateModel model)
         {
+            var allResults = await _reservationRepository.GetAllAsync(query => query.Where(x => x.CheckInDate > DateTime.Now && x.CheckOutDate > DateTime.Now));
+
+            foreach (var item in allResults)
+            {
+                if ((model.CheckInDate >= item.CheckInDate && model.CheckInDate <= item.CheckOutDate) || (model.CheckInDate <= item.CheckInDate && model.CheckOutDate >= item.CheckInDate))
+                {
+                    return 0;
+                }
+            }
+
             var paymentId = await _paymentService.CreatePaymentAsync(new PaymentCreateModel { UserId = model.UserId });
 
             var record = _mapper.Map<Reservation>(model);

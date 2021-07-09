@@ -37,7 +37,11 @@ namespace Hotel.Api.Controllers
         public async Task<IActionResult> AddReservation(AddReservationModel model)
         {
             var result = await _reservationService.CreateReservationAsync(model.ReservationCreateModel);
-            return RedirectToAction("GetByIdAsync", "Payments", result);
+            if(result > 0)
+            {
+                return RedirectToAction("GetByIdAsync", "Payments", new { id = result });
+            }
+            return RedirectToAction("AddReservationView");
         }
 
         [HttpGet("/delete")]
