@@ -2,6 +2,10 @@ using Hotel.Api.Application.Common.Models;
 using Hotel.Api.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Hotel.WebApp.Controllers
@@ -35,6 +39,25 @@ namespace Hotel.WebApp.Controllers
                 }
                 if (result.Succeeded)
                 {
+                    try
+                    {
+                        HttpClient client = new HttpClient();
+                        client.BaseAddress = new Uri("http://localhost:3000");
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.ConnectionClose = true;
+                        var body = new Dictionary<string, string>();
+                        body.Add("email", registerModel.Email);
+                        var jsonString = JsonConvert.SerializeObject(body);
+                        var stringContent = new StringContent(jsonString);
+                        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/email");
+                        requestMessage.Content = stringContent;
+                        var task = client.SendAsync(requestMessage);
+                        var response = task.Result;
+                    }
+                    catch
+                    {
+
+                    }
                     return RedirectToAction("Dashboard", "Dashboard");
                 }
 
