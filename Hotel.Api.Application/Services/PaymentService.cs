@@ -2,8 +2,10 @@
 using Hotel.Api.Application.Common.Exceptions;
 using Hotel.Api.Application.Common.Interfaces;
 using Hotel.Api.Application.Common.Models.PaymentModels;
+using Hotel.Api.Application.Common.Models.ReservationModels;
 using Hotel.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ namespace Hotel.Api.Application.Services
         public async Task<int> CreatePaymentAsync(PaymentCreateModel model)
         {
             var record = _mapper.Map<Payment>(model);
+            record.InsertDate = DateTime.Now;
             await _paymentRepository.InsertAsync(record);
             return record.Id;
         }
@@ -39,9 +42,9 @@ namespace Hotel.Api.Application.Services
             return true;
         }
 
-        public async Task<List<PaymentModel>> GetAllPaymentsAsync()
+        public async Task<List<PaymentModel>> GetAllPaymentsAsync(string id)
         {
-            var result = await _paymentRepository.GetAllAsync(query => query.Include(x => x.User));
+            var result = await _paymentRepository.GetAllAsync(query => query.Where(x => x.UserId == id).Include(x => x.User));
             return _mapper.Map<List<PaymentModel>>(result);
         }
 
@@ -52,7 +55,16 @@ namespace Hotel.Api.Application.Services
             {
                 throw new NotFoundException("Payment", "Payment not found");
             }
-            return _mapper.Map<PaymentModel>(result);
+            var mappedResult = _mapper.Map<PaymentModel>(result);
+            mappedResult.Reservations.AddRange(result.Reservations.Select(x => 
+                new ReservationModel 
+                { 
+                    CheckInDate = x.CheckInDate,
+                    CheckOutDate = x.CheckOutDate, 
+                    RoomId = x.RoomId,
+                    RoomPrice = x.Room.Price
+                }));
+            return mappedResult;
         }
 
         public async Task<PaymentUpdateModel> UpdatePaymentAsync(PaymentUpdateModel model)
@@ -63,9 +75,10 @@ namespace Hotel.Api.Application.Services
                 throw new NotFoundException("Payment", "Payment not found");
             }
 
+            editeEntity.Price = model.Total;
+            editeEntity.UpdateDate = DateTime.Now;
             _paymentRepository.Update(editeEntity);
             return model;
         }
-
     }
 }

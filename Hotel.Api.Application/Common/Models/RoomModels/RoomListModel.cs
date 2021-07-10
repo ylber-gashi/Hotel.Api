@@ -5,6 +5,7 @@ namespace Hotel.Api.Application.Common.Models.RoomModels
 {
     public class RoomListModel
     {
+        public int Id { get; set; }
         public int RoomNumber { get; set; }
         public int FloorNumber { get; set; }
         public int Capacity { get; set; }

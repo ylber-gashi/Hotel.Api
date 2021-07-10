@@ -9,7 +9,7 @@ namespace Hotel.Api.Domain.Entities
         public User User { get; set; }
 
         public double Price { get; set; }
-
+        public bool IsPayed { get; set; }
         public List<Reservation> Reservations { get; set; }
     }
 }

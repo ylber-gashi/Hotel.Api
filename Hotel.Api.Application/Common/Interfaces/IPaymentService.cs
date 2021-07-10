@@ -7,7 +7,7 @@ namespace Hotel.Api.Application.Common.Interfaces
     public interface IPaymentService
     {
         Task<int> CreatePaymentAsync(PaymentCreateModel model);
-        Task<List<PaymentModel>> GetAllPaymentsAsync();
+        Task<List<PaymentModel>> GetAllPaymentsAsync(string id);
         Task<PaymentModel> GetPaymentByIdAsync(int id);
         Task<PaymentUpdateModel> UpdatePaymentAsync(PaymentUpdateModel model);
         Task<bool> DeleteAsync(int id);
