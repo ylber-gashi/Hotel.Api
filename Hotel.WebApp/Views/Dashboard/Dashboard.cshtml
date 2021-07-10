@@ -75,7 +75,7 @@
                                 <div class="row align-items-center no-gutters">
                                     <div class="col mr-2">
                                         @{ 
-                                            var bussyRooms = Math.Round((Model.BusyRooms / Model.AllRooms), 2);
+                                            var bussyRooms = Math.Round((Model.BusyRooms / Model.AllRooms), 2) * 100;
                                             if (double.IsNaN(bussyRooms))
                                             {
                                                 bussyRooms = 0;
@@ -109,16 +109,14 @@
         </div>
         <div class="col-md-4 offset-xl-0">
             <p>
-                <a class="btn btn-success btn-circle ml-1" role="button"><i class="fas fa-check text-white"></i></a> <a href="/payments/@user.Id"><strong> Payments</strong></a> |<small> <a href="/payments">All Payments</a></small>
+                <a class="btn btn-success btn-circle ml-1" role="button"><i class="fas fa-check text-white"></i></a> <a href="/payments/@user.Id"><strong> Payments</strong></a>
             </p>
         </div>
         <div class="col-md-4">
             <p>
                 <a href="/reservations" class="btn btn-info btn-circle ml-1" role="button">
                     <i class="fas fa-info-circle text-white"></i>
-                </a><a href="/reservations/@user.Id"><strong> Reservations</strong></a> |<small>
-                    <a href="/reservations/add">Add Reservation</a>
-                </small>
+                </a><a href="/reservations/add"><strong> Add Reservation</strong></a>
             </p>
         </div>
     </div>}
@@ -137,7 +135,7 @@
                                     {
                                         if (room.FloorNumber == i)
                                             floorRooms++;
-                                        if (room.FloorNumber == i && room.Status != RoomStatus.NotAvailable)
+                                        if (room.FloorNumber == i && Model.Reservations.FirstOrDefault(x => x.RoomId == room.Id && x.CheckOutDate >= DateTime.Now) is not null)
                                             counter++;
                                     }
                                     var result = Math.Round(((counter / floorRooms) * 100), 2);

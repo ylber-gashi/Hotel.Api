@@ -31,7 +31,7 @@ namespace Hotel.Api.Application.Services
 
         public async Task<int> CreateReservationAsync(ReservationCreateModel model)
         {
-            var allResults = await _reservationRepository.GetAllAsync(query => query.Where(x => x.CheckInDate > DateTime.Now && x.CheckOutDate > DateTime.Now));
+            var allResults = await _reservationRepository.GetAllAsync(query => query.Where(x => x.CheckOutDate > DateTime.Now && x.RoomId == model.RoomId));
 
             foreach (var item in allResults)
             {

@@ -44,29 +44,32 @@
                     <tbody id="myTable">
                         @foreach (var reservation in Model.Reservations)
                         {
-                            <tr>
-                                <td>
-                                    <strong>@reservation.Id</strong>
-                                </td>
-                                <td>@reservation.CheckInDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
-                                <td>@reservation.CheckOutDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
-                                <td><a href="/rooms/@reservation.RoomId">@reservation.RoomId</a></td>
-                                <td>@reservation.RoomPrice</td>
-                                <td>@Model.IsPayed</td>
-                                @{
-                                    if (user.Id == reservation.UserId || User.IsInRole("Admin"))
-                                    {
-                                        <td>
-                                            <a asp-action="DeleteReservation" asp-controller="Reservations"
-                                               asp-route-reservationId="@reservation.Id">
-                                                <button class="btn-sm btn-danger">
-                                                    Delete
-                                                </button>
-                                            </a>
-                                        </td>
+                            if (@reservation.Id != 0)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@reservation.Id</strong>
+                                    </td>
+                                    <td>@reservation.CheckInDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
+                                    <td>@reservation.CheckOutDate.ToString("dddd, dd MMMM @ hh:mm tt")</td>
+                                    <td><a href="/rooms/@reservation.RoomId">@reservation.RoomId</a></td>
+                                    <td>@reservation.RoomPrice</td>
+                                    <td>@Model.IsPayed</td>
+                                    @{
+                                        if (user.Id == reservation.UserId || User.IsInRole("Admin"))
+                                        {
+                                            <td>
+                                                <a asp-action="DeleteReservation" asp-controller="Reservations"
+                                                   asp-route-reservationId="@reservation.Id">
+                                                    <button class="btn-sm btn-danger">
+                                                        Delete
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        }
                                     }
-                                }
-                            </tr>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>

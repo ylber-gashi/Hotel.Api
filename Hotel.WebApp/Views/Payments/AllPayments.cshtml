@@ -10,7 +10,7 @@
         <h3>Payments</h3>
         <div>
             <a href="/dashboard"><button class="btn btn-light shadow mr-2">Dashboard</button></a>
-            <a href="/reservations"><button class="btn btn-light shadow">Reservations</button></a>
+            <a href="/reservations/add"><button class="btn btn-light shadow">Add Reservations</button></a>
         </div>
     </div>
     <div class="card shadow">
@@ -29,10 +29,7 @@
                         <tr>
                             <th>Payment ID</th>
                             <th>User ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
                             <th>Price</th>
-                            <th>Reserved Rooms</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
@@ -43,15 +40,7 @@
                                     <a href="/payments/reservations/@payment.Id"><strong>@payment.Id</strong></a>
                                 </td>
                                 <td>@payment.UserId</td>
-                                <td>@payment.FirstName</td>
-                                <td>@payment.LastName</td>
                                 <td>@payment.Price</td>
-                                <td>
-                                @foreach (var reservation in payment.Reservations)
-                                {
-                                    <a href="/rooms/@reservation.RoomId">@reservation.RoomNumber </a>
-                                }
-                                </td>
                             </tr>
                         }
                     </tbody>
